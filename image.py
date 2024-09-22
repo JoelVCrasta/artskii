@@ -2,16 +2,18 @@ import cv2, sys
 import logging
 from term import term_size, term_clear_full
 from genascii import generate_ascii, generate_ascii_alpha
-from main import Main
 
 logging.basicConfig(level=logging.INFO)
 
-class Image(Main):
-    def __init__(self):
-        super().__init__()
+class Image:
+    def __init__(self, path):
+        self.path = path
         self.image = None
         self.image_gray = None
         self.alpha_channel = None
+        self.image_gray_resized = None
+        self.alpha_channel_resized = None
+        self.ascii = None
 
     def load_image(self):
         self.image = cv2.imread(self.path, cv2.IMREAD_UNCHANGED)
@@ -44,12 +46,16 @@ class Image(Main):
         sys.stdout.write(ascii_image)
         sys.stdout.flush()
 
-    def process_image(self):
+        self.ascii = ascii_image
+
+    def process_image(self) -> str:
         try:
             self.load_image()
             self.check_alpha_channel()
             self.resize_image()
             self.display_image()
+
+            return self.ascii
 
         except FileNotFoundError as e:
             logging.error(e)
