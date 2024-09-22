@@ -1,44 +1,60 @@
-import cv2
+import cv2, sys
+import logging
 from term import term_size, term_clear_full
 from genascii import generate_ascii, generate_ascii_alpha
+from main import Main
 
-def image(source):
-    try:
-        image = cv2.imread(source, cv2.IMREAD_UNCHANGED)
+logging.basicConfig(level=logging.INFO)
 
-        if image is None:
-            raise FileNotFoundError(f"File not found: {source}")
+class Image(Main):
+    def __init__(self):
+        super().__init__()
+        self.image = None
+        self.image_gray = None
+        self.alpha_channel = None
 
-        """
-        * Check if image has alpha channel
-        * Convert image to grayscale
-        """
-        if image.shape[2] == 4:
-            alpha_channel = image[:, :, 3]
-            image_gray = cv2.cvtColor(image, cv2.COLOR_BGRA2GRAY)
+    def load_image(self):
+        self.image = cv2.imread(self.path, cv2.IMREAD_UNCHANGED)
+
+        if self.image is None:
+            raise FileNotFoundError(f"File not found: {self.path}")
+
+    def check_alpha_channel(self):
+        if self.image.shape[2] == 4:
+            self.alpha_channel = self.image[:, :, 3]
+            self.image_gray = cv2.cvtColor(self.image, cv2.COLOR_BGRA2GRAY)
         else:
-            alpha_channel = None
-            image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            self.alpha_channel = None
+            self.image_gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
 
-        # Resize image
-        resize_width, resize_height = term_size(image_gray.shape)
-        image_gray_resized = cv2.resize(image_gray, (resize_width, resize_height))
+    def resize_image(self):
+        resize_width, resize_height = term_size(self.image_gray.shape)
+        self.image_gray_resized = cv2.resize(self.image_gray, (resize_width, resize_height))
 
-        if alpha_channel is not None:
-            alpha_channel_resized = cv2.resize(alpha_channel, (resize_width, resize_height))
+        if self.alpha_channel is not None:
+            self.alpha_channel_resized = cv2.resize(self.alpha_channel, (resize_width, resize_height))
 
-        # Add alpha channel to resized image
-        if alpha_channel is None:
-            ascii_img = generate_ascii(image_gray_resized)
-        else:
-            ascii_img = generate_ascii_alpha(image_gray_resized, alpha_channel_resized)
-
+    def display_image(self):
         term_clear_full()
-        print(ascii_img)
+        if self.alpha_channel is not None:
+            ascii_image = generate_ascii_alpha(self.image_gray_resized, self.alpha_channel_resized)
+        else:
+            ascii_image = generate_ascii(self.image_gray_resized)
 
-    except FileNotFoundError as e:
-        print(e)
-        exit()
-    except Exception as e:
-        print(f"An error occurred while processing the image: {e}")
-        exit()
+        sys.stdout.write(ascii_image)
+        sys.stdout.flush()
+
+    def process_image(self):
+        try:
+            self.load_image()
+            self.check_alpha_channel()
+            self.resize_image()
+            self.display_image()
+
+        except FileNotFoundError as e:
+            logging.error(e)
+            exit()
+
+        except Exception as e:
+            logging.error(f"Something went wrong:\n{e}")
+            exit()
