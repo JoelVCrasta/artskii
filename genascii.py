@@ -1,8 +1,8 @@
 # ASCII letters (light to dark)
 ASCII_CHARS = ['.', ',', '-', '+', '*', '?', '%', '#', '$', '@']
-ASCII_LEN = len(ASCII_CHARS)
+ASCII_LEN = len(ASCII_CHARS) - 1
 
-def generate_ascii(img):
+def generate_ascii(img) -> str:
     image_ascii = ''
 
     for row in img:
@@ -12,7 +12,7 @@ def generate_ascii(img):
 
     return image_ascii
 
-def generate_ascii_alpha(img, alpha):
+def generate_ascii_alpha(img, alpha) -> str:
     image_ascii = ''
 
     for row, row_alpha in zip(img, alpha):

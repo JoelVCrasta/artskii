@@ -3,7 +3,7 @@ from util import check_source
 from image import image
 from video import video
 
-source = 'assets/bocchi.jpg'
+source = 'assets/bocchi.jpeg'
 
 try:
     if check_source(source) == 0:
@@ -13,9 +13,6 @@ try:
     else:
         print('Unsupported file type')
         exit()
-except FileNotFoundError:
-    print('File not found')
-    exit()
 except Exception as e:
     print(e)
     exit()

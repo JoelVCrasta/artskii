@@ -1,4 +1,6 @@
 import shutil
+import os
+import sys
 
 def term_size(shape):
     terminal_columns, terminal_rows = shutil.get_terminal_size()
@@ -15,9 +17,17 @@ def term_size(shape):
         scaling_factor = terminal_columns / shape[1]
 
     new_width = int(shape[1] * scaling_factor)
-    new_height = int(shape[0] * scaling_factor / height_scale) 
+    new_height = int(shape[0] * scaling_factor / height_scale) - 2
 
     return new_width, new_height
 
 def term_clear():
-    print('\033[H\033[J')
+    sys.stdout.write("\033[H")
+    sys.stdout.flush()
+
+
+def term_clear_full():
+    if os.name == 'nt':
+        os.system('cls')
+    else:
+        os.system('clear')
