@@ -1,7 +1,7 @@
-import cv2, logging
+import logging
 from utils.source import check_source
 from utils.args import get_args
-# from video import video
+from video import Video
 from image import Image
 
 source = 'assets/bocchi.jpeg'
@@ -19,12 +19,12 @@ class Main:
     def run(self):
         try: 
             if check_source(self.path) == 0:
-                image = Image(self.path)
-                self.ascii = image.process_image()
+                img = Image(self.path)
+                self.ascii = img.process_image()
 
             elif check_source(self.path) == 1:
-                pass
-
+                vid = Video(self.path)
+                vid.process_video()
             else:
                 raise Exception('Invalid path extension')
             
