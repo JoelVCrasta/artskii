@@ -7,7 +7,7 @@ class Transform():
         self.media = None
         self.alpha_channel = None
         self.shape_resized = None
-        self.ascii = None
+        self.ascii = ''
 
     def grayscale(self):
         if self.media.shape[2] == 4:
@@ -19,10 +19,9 @@ class Transform():
         if self.media.shape[2] == 4:
             self.alpha_channel = self.media[:, :, 3]
 
-    def resize_shape(self):
+    def resize(self):
         self.shape_resized = term_size(self.media.shape)
 
-    def resize_media(self):
         self.media = cv2.resize(
             self.media, 
             (self.shape_resized[0], self.shape_resized[1])
