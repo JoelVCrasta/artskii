@@ -1,80 +1,74 @@
 import cv2, time, sys
 import logging
-from term import term_size, term_clear, term_clear_full
-from genascii import generate_ascii
+from utils.term import term_clear
+from transform import Transform
 
 logging.basicConfig(level=logging.INFO)
 
-class Video:
-    def __init__(self, source):
-        self.source = source
-        self.capture = None
-        self.frame_count = None
-        self.frame_width = None
-        self.frame_height = None
-        self.target_ms = None
+class Video(Transform):
+    def __init__(self, path):
+        super().__init__()
+        self.path = path
+        self.video = None
+        self.height = None
+        self.width = None
+        self.frame_count = 0
+        self.timing = 0
 
     def load_video(self):
-        self.capture = cv2.VideoCapture(self.source)
+        self.video = cv2.VideoCapture(self.path)
 
-        if not self.capture.isOpened():
-            raise FileNotFoundError(f"File not found: {self.source}")
+        if not self.video.isOpened():
+            raise FileNotFoundError(f"File not found: {self.path}")
         
-        self.frame_count = int(self.capture.get(cv2.CAP_PROP_FRAME_COUNT))
-        self.frame_width = int(self.capture.get(cv2.CAP_PROP_FRAME_WIDTH))
-        self.frame_height = int(self.capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        fps = int(self.capture.get(cv2.CAP_PROP_FPS))
-        self.target_ms = 1 / fps
+        self.height = self.video.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        self.width = self.video.get(cv2.CAP_PROP_FRAME_WIDTH)
+        self.frame_count = self.video.get(cv2.CAP_PROP_FRAME_COUNT)
+        fps = self.video.get(cv2.CAP_PROP_FPS)
+        self.timing = 1 / fps
 
-    def frame_timing(self, elapsed_time):
-        remaining_time = self.target_ms - elapsed_time
+    def timing_fps(self, elapsed_time):
+        remaining_time = self.timing - elapsed_time
 
         if remaining_time > 0:
-            time.sleep(remaining_time)    
-
-    def display_video(self):
-        frame_idx = 0
-
-        # Resize frame to fit terminal size
-        shape = [self.frame_height, self.frame_width]
-        resize_width, resize_height = term_size(shape)
-
-        while self.capture.isOpened():
-            start_time = time.time()
-
-            ret, frame = self.capture.read()
-
-            if not ret:
-                break
-
-            frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            frame_gray_resized = cv2.resize(frame_gray, (resize_width, resize_height))
-
-            ascii_img = generate_ascii(frame_gray_resized)
-            term_clear()
-            sys.stdout.write(ascii_img)
-            sys.stdout.flush()
-
-            frame_idx += 1
-            if frame_idx == self.frame_count:
-                break
-
-            # Calculate frame timing
-            elapsed_time = time.time() - start_time
-            self.frame_timing(elapsed_time)
-
-        self.capture.release()
+            time.sleep(remaining_time) 
 
     def process_video(self):
         try:
             self.load_video()
-            term_clear_full()
-            self.display_video()
+            self.resize_shape_video(self.height, self.width)
+
+            frame_idx = 0
+            while self.video.isOpened():
+                start_time = time.time()
+
+                ret, frame = self.video.read()
+                if not ret:
+                    break
+
+                self.media = frame
+                self.resize()
+                self.grayscale()
+                self.display_media()
+
+                if frame_idx == self.frame_count - 1:
+                    term_clear()
+                    break
+                frame_idx += 1
+
+                elapsed_time = time.time() - start_time
+                self.timing_fps(elapsed_time)
+            
+            self.video.release()
 
         except FileNotFoundError as e:
             logging.error(e)
-            exit()
+            sys.exit(1)
 
         except Exception as e:
-            logging.error(f"An error occurred while processing the video: {e}")
-            exit()
+            logging.error(e)
+            sys.exit(1)
+
+
+
+    
