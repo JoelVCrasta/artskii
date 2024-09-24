@@ -1,11 +1,8 @@
-import shutil
-import os
-import sys
+import shutil, sys
 
 def term_size(shape):
-    terminal_columns, terminal_rows = shutil.get_terminal_size()
-
     height_scale = 2
+    terminal_columns, terminal_rows = shutil.get_terminal_size()
 
     terminal_aspect_ratio = terminal_columns / terminal_rows
     image_aspect_ratio = shape[1] / shape[0]
@@ -25,9 +22,4 @@ def term_clear():
     sys.stdout.write("\033[H")
     sys.stdout.flush()
 
-
-def term_clear_full():
-    if os.name == 'nt':
-        os.system('cls')
-    else:
-        os.system('clear')
+    
