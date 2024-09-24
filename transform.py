@@ -1,5 +1,5 @@
 import cv2, sys
-from term import term_size, term_full_clear, term_clear
+from utils.term import term_size, term_clear
 from genascii import generate_ascii
 
 class Transform():
@@ -19,9 +19,13 @@ class Transform():
         if self.media.shape[2] == 4:
             self.alpha_channel = self.media[:, :, 3]
 
-    def resize(self):
+    def resize_shape(self):
         self.shape_resized = term_size(self.media.shape)
 
+    def resize_shape_video(self, height, width):
+        self.shape_resized = term_size((height, width))
+
+    def resize(self):
         self.media = cv2.resize(
             self.media, 
             (self.shape_resized[0], self.shape_resized[1])
@@ -34,7 +38,7 @@ class Transform():
             )
 
     def display_media(self):
-        term_full_clear()
+        term_clear()
 
         if self.alpha_channel is None:
             self.ascii = generate_ascii(self.media)
