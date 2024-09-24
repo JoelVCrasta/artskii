@@ -19,6 +19,7 @@ class Image(Transform):
         try:
             self.load_image()
             self.alpha()
+            self.resize_shape()
             self.resize()
             self.grayscale()
             self.display_media()
