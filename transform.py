@@ -1,6 +1,6 @@
 import cv2, sys
 from utils.term import term_size, term_clear
-from genascii import generate_ascii
+from utils.genascii import generate_ascii, generate_ascii_alpha, use_char_set
 
 class Transform():
     def __init__(self):
@@ -37,13 +37,22 @@ class Transform():
                 (self.shape_resized[0], self.shape_resized[1])
             )
 
-    def display_media(self):
+    def get_char_set(self, invert):
+        if invert:
+            use_char_set(1)
+        else:
+            use_char_set(0)
+
+    def display_media(self, invert):
         term_clear()
+        self.get_char_set(invert)
 
         if self.alpha_channel is None:
             self.ascii = generate_ascii(self.media)
         else:
-            self.ascii = generate_ascii(self.media, self.alpha_channel)
+            self.ascii = generate_ascii_alpha(self.media, self.alpha_channel)
 
         sys.stdout.write(self.ascii)
         sys.stdout.flush()
+
+            
