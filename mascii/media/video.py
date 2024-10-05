@@ -1,7 +1,7 @@
 import cv2, time, sys
 import logging
 from utils.term import term_clear
-from transform import Transform
+from .transform import Transform
 
 logging.basicConfig(level=logging.INFO)
 

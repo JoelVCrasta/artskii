@@ -1,8 +1,8 @@
 import logging, sys
 from utils.source import check_source
 from utils.args import get_args
-from video import Video
-from image import Image
+from media.video import Video
+from media.image import Image
 
 logging.basicConfig(level=logging.INFO)
 class Main:
@@ -49,8 +49,10 @@ class Main:
                 logging.error(e)
                 sys.exit(1)
 
-
-if __name__ == '__main__':
+def main():
     main = Main()
     main.run()
     main.output()
+
+if __name__ == '__main__':
+    main()

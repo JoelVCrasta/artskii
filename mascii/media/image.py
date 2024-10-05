@@ -1,6 +1,6 @@
 import cv2, sys
 import logging
-from transform import Transform
+from .transform import Transform
 
 logging.basicConfig(level=logging.INFO)
 
