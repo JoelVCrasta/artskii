@@ -1,5 +1,5 @@
 # ASCII letters (light to dark)
-ASCII_CHARS = ['.', ',', '-', '+', '*', '?', '%', '#', '$', '@']
+ASCII_CHARS = ['.', ':', '-', '+', '*', '?', '#', '%', '$', '@']
 ASCII_LEN = len(ASCII_CHARS) - 1
 
 def generate_ascii(img) -> str:
