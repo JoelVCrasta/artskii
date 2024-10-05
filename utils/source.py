@@ -1,4 +1,3 @@
-import cv2
 import os
 
 def check_source(source):
