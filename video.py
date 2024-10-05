@@ -6,9 +6,11 @@ from transform import Transform
 logging.basicConfig(level=logging.INFO)
 
 class Video(Transform):
-    def __init__(self, path):
+    def __init__(self, path, speed, invert):
         super().__init__()
         self.path = path
+        self.speed = speed
+        self.invert = invert
         self.video = None
         self.height = None
         self.width = None
@@ -25,13 +27,13 @@ class Video(Transform):
         self.width = self.video.get(cv2.CAP_PROP_FRAME_WIDTH)
         self.frame_count = self.video.get(cv2.CAP_PROP_FRAME_COUNT)
         fps = self.video.get(cv2.CAP_PROP_FPS)
-        self.timing = 1 / fps
+        self.timing = (1 / fps) * (5 / self.speed)
 
     def timing_fps(self, elapsed_time):
         remaining_time = self.timing - elapsed_time
 
         if remaining_time > 0:
-            time.sleep(remaining_time) 
+            time.sleep(remaining_time)  
 
     def process_video(self):
         try:
@@ -49,7 +51,7 @@ class Video(Transform):
                 self.media = frame
                 self.resize()
                 self.grayscale()
-                self.display_media()
+                self.display_media(self.invert)
 
                 if frame_idx == self.frame_count - 1:
                     term_clear()

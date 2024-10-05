@@ -5,9 +5,10 @@ from transform import Transform
 logging.basicConfig(level=logging.INFO)
 
 class Image(Transform):
-    def __init__(self, path):
+    def __init__(self, path, invert):
         super().__init__()
         self.path = path
+        self.invert = invert
 
     def load_image(self):
         self.media = cv2.imread(self.path, cv2.IMREAD_UNCHANGED)
@@ -22,7 +23,7 @@ class Image(Transform):
             self.resize_shape()
             self.resize()
             self.grayscale()
-            self.display_media()
+            self.display_media(self.invert)
             return self.ascii
         
         except FileNotFoundError as e:

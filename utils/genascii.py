@@ -1,13 +1,23 @@
-# ASCII letters (light to dark)
-ASCII_CHARS = ['.', ':', '-', '+', '*', '?', '#', '%', '$', '@']
-ASCII_LEN = len(ASCII_CHARS) - 1
+CHAR_SETS = {
+    0: ['.', ':', '-', '+', '*', '?', '#', '%', '$', '@'],
+    1: ['@', '$', '%', '#', '?', '*', '+', '-', ':', '.']
+}
+ascii_chars = []
+ascii_len = 0
+
+def use_char_set(idx: int):
+    global ascii_chars, ascii_len
+
+    ascii_chars = CHAR_SETS[idx]
+    ascii_len = len(ascii_chars)
+
 
 def generate_ascii(img) -> str:
     image_ascii = ''
 
     for row in img:
         for pixel in row:
-            image_ascii += ASCII_CHARS[int((pixel / 255) * ASCII_LEN)]
+            image_ascii += ascii_chars[int((pixel / 255) * ascii_len)]
         image_ascii += '\n'
 
     return image_ascii
@@ -20,7 +30,7 @@ def generate_ascii_alpha(img, alpha) -> str:
             if pixel_alpha < 64:
                 image_ascii += ' '
             else:
-                image_ascii += ASCII_CHARS[int((pixel / 255) * ASCII_LEN)]
+                image_ascii += ascii_chars[int((pixel / 255) * ascii_len)]
         image_ascii += '\n'
     
     return image_ascii
