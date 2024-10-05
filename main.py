@@ -1,44 +1,54 @@
-import logging
+import logging, sys
 from utils.source import check_source
 from utils.args import get_args
 from video import Video
 from image import Image
-
-source = 'assets/bocchi.jpeg'
 
 logging.basicConfig(level=logging.INFO)
 class Main:
     def __init__(self):
         self.args = get_args()
         self.path = self.args.path
-        self.out = self.args.out
         self.speed = self.args.speed
-
-        self.ascii = None
+        self.invert = self.args.invert
+        self.out = self.args.out
+        self.ascii = ''
 
     def run(self):
+        if self.args.out:
+            print(f"Outputting to {self.out}.txt")
+            return
+
         try: 
             if check_source(self.path) == 0:
-                img = Image(self.path)
+                img = Image(self.path, self.invert)
                 self.ascii = img.process_image()
 
             elif check_source(self.path) == 1:
-                vid = Video(self.path)
+                vid = Video(self.path, self.speed, self.invert)
                 vid.process_video()
+                
             else:
                 raise Exception('Invalid path extension')
             
         except Exception as e:
-            print(e)
-            exit()
+            logging.error(e)
+            sys.exit(1)
 
     def output(self):
-        if self.out and check_source(self.path) == 0:
+        if self.args.out:
             try:
-                with open(self.out, 'w') as f:
-                    f.write(self.ascii)
+                if check_source(self.path) == 0:
+                    with open(self.out+".txt", 'w') as f:
+                        f.write(self.ascii)
+
+                if check_source(self.path) == 1:
+                    logging.info("Video output is not supported yet")
+            
             except Exception as e:
                 logging.error(e)
+                sys.exit(1)
+
 
 if __name__ == '__main__':
     main = Main()
