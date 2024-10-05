@@ -1,12 +1,12 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='mascii',
+    name='artksii',
     version='1.0',
     author='Joel Crasta',
     author_email='loejstarc@gmail.com',
     url='https://github.com/joelvcrasta/ascii',
-    description='mascii is CLI tool to convert images and videos to ASCII art.',
+    description='artskii is CLI tool to convert images and videos to ASCII art.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     packages=find_packages(),
@@ -15,7 +15,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'mascii = mascii.main:main'
+            'artskii = artksii.main:main'
         ],
     },
     classifiers=[
